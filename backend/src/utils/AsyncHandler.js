@@ -1,6 +1,3 @@
-
-
-
 const AsyncHandler=(func)=>(req,res,next)=>{
     try{
         func(req,res,next)
