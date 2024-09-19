@@ -40,7 +40,8 @@ const userSchema=Schema({
         required:[true,"Password is required"]
     },
     Refreshtoken:{
-        type:String
+        type:String,
+        default:""
     },
 
 },{
