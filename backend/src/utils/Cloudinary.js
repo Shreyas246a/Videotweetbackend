@@ -2,13 +2,12 @@ import {v2 as cloudinary} from "cloudinary"
 import fs from "fs"
 
 cloudinary.config({
-    cloud_name:process.env.CLOUDINARY_NAME,
-    api_key:process.env.CLOUDINARY_API_KEY,
-    api_secret:process.env.CLUDINARY_API_SECRET,
+    cloud_name:"ddk13bn3l",
+    api_key :324689639989513,
+    api_secret:"12FW2JmohSFDCqfDHNDxx8Q7xHA",
 })
 
 const uploadFile= async(localFilePath)=>{
-
 try{
     if(!localFilePath) return null
 
@@ -19,6 +18,8 @@ try{
     return response
 
 }catch(err){
+    
+    console.log(err)
     fs.unlinkSync(localFilePath)
     return null
 
