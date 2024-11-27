@@ -6,8 +6,8 @@ const Dashboard = () => {
     const logout =useAuth()
 
 return(<div>
-    <input type="button" value="Logout"onClick={async()=>{
-        try{
+    <form onSubmit={async()=>{
+       try{
        const res= await logout;
        console.log(res)
         navigate('/login')
@@ -15,8 +15,10 @@ return(<div>
             console.count(err)
         navigate('/dashboard')
         }
+    }}>
 
-    }}></input>
+<button>Logout</button>
+    </form>
 </div>)
 
 

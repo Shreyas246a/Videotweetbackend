@@ -123,16 +123,13 @@ const loginUser=asyncHandler(async(req,res,next)=>{
   new ApiResponse(200,{
     user:loggedinUser,refreshToken,accessToken
   },"User logged in Successfully")
-  )
-
-  
+  )  
 })
 
 
 const logoutUser=asyncHandler(async(req,res,next)=>{
-
   const user =req.user
-
+  console.log("Logout", req)
   const options={
     httpOnly:true,
     secure:true
@@ -266,6 +263,64 @@ const updateCover=asyncHandler(async(req,res,next)=>{
 
   return res.status(200)
   .json(new ApiResponse(200,user,"Updated Cover Image"))
+});
+
+const getUserChannelProfile=asyncHandler(async(req,res)=>{
+  const {username}=req.params;
+
+  if(!username?.trim()){
+    throw new ApiError(400,"User not found")
+  }
+
+  const channnel=await User.aggregate([{
+    $match:{
+      username:username?.toLowerCase()
+    }},
+    {
+      $lookup:{
+        from : "subscriptions",
+        localField:"_id",
+        foreignField:"channel",
+        as:"subscribers"
+      },
+    },{
+      $lookup:{
+        from:"subscriptions",
+        localField:"_id",
+        foreignField:"subscriber",
+        as:"subscribedTo"
+      },
+    },{
+      $addField:{
+        'subscriberscount':{$size:subscribers},
+        'subscribedtocount':{$size:subscribedto}      
+      },
+      isSubscribed:{
+        $cond:{
+        $if:{$in:[req.user?._id,"$subscribers.subscriber"]}
+      }}
+    },{
+      $project:{
+        fullname:1,
+        email:1,
+        username:1,
+        subscriberscount:1,
+        subscribedtocount:1,
+        isSubscribed:1,
+        avatar:1,
+        coverImg:1,
+      }
+    }])
+
+    if(channnel?.length){
+      throw new ApiError(400,"Channel does not Exist")
+    }
+
+    return res.status(200)
+    .json(
+      new ApiResponse(200,channnel[0],"User channel fetched")
+    )
+    
 })
 
-export {registerUser,loginUser,logoutUser,refressAccessToken,updatePassword}
+export {registerUser,loginUser,logoutUser,getUserChannelProfile,refressAccessToken,updatePassword,updateAccountDetails,updateAvatar,updateCover,getUserChannelProfile}
